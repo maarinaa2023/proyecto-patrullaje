@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="3"
+      main_tree_to_execute="PatrolRescueMission">
+  <BehaviorTree ID="PatrolRescueMission">
+    <Fallback>
+      <ReactiveSequence name="PatrolMode">
+        <Inverter>
+          <victimReported/>
+        </Inverter>
+        <Fallback>
+          <Sequence name="checkSection">
+            <Inverter>
+              <IsInAssignedSection current_section=""
+                                   assigned_section=""
+                                   is_in_section=""/>
+            </Inverter>
+            <NavigateToAssignedSection section="{assigned_section}"
+                                       success=""/>
+          </Sequence>
+          <Sequence name="VictimDetection">
+            <ScanForVictim victim_found="{victim_found}"
+                           victim_location="{victim_location}"/>
+            <reportVictim victim_location="{victim_location}"
+                          victim_found="{victim_found}"
+                          success=""/>
+          </Sequence>
+          <Sequence name="moveInSection">
+            <MoveInSection section="{assigned_section}"
+                           success=""/>
+          </Sequence>
+        </Fallback>
+      </ReactiveSequence>
+      <Sequence name="RescueMode">
+        <GetVictimLocation rescue_location="{rescue_location}"/>
+        <NavigateToVictim rescue_location="{rescue_location}"
+                          success=""/>
+        <ReactiveSequence>
+          <Inverter>
+            <allInSectionV/>
+          </Inverter>
+          <AreAllRobotsPresent all_robots_present="{all_robots_present}"
+                               present=""/>
+        </ReactiveSequence>
+        <ResetVictimReport success=""/>
+        <PerformSynchronization success=""/>
+        <ReturnToAssignedSection section="{assigned_section}"
+                                 success=""/>
+      </Sequence>
+    </Fallback>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="AreAllRobotsPresent">
+      <input_port name="all_robots_present"
+                  type="bool"/>
+      <output_port name="present"
+                   type="bool"/>
+    </Action>
+    <Action ID="GetVictimLocation">
+      <output_port name="rescue_location"
+                   type="Point3D"/>
+    </Action>
+    <Action ID="IsInAssignedSection">
+      <input_port name="current_section"
+                  type="int"/>
+      <input_port name="assigned_section"
+                  type="int"/>
+      <output_port name="is_in_section"
+                   type="bool"/>
+    </Action>
+    <Action ID="MoveInSection">
+      <input_port name="section"
+                  type="int"/>
+      <output_port name="success"
+                   type="bool"/>
+    </Action>
+    <Action ID="NavigateToAssignedSection">
+      <input_port name="section"
+                  type="int"/>
+      <output_port name="success"
+                   type="bool"/>
+    </Action>
+    <Action ID="NavigateToVictim">
+      <input_port name="rescue_location"
+                  type="Point3D"/>
+      <output_port name="success"
+                   type="bool"/>
+    </Action>
+    <Action ID="PerformSynchronization">
+      <output_port name="success"
+                   type="bool"/>
+    </Action>
+    <Action ID="ResetVictimReport">
+      <output_port name="success"
+                   type="bool"/>
+    </Action>
+    <Action ID="ReturnToAssignedSection">
+      <input_port name="section"
+                  type="int"/>
+      <output_port name="success"
+                   type="bool"/>
+    </Action>
+    <Action ID="ScanForVictim">
+      <output_port name="victim_found"
+                   type="bool"/>
+      <output_port name="victim_location"
+                   type="Point3D"/>
+    </Action>
+    <Condition ID="allInSectionV"
+               editable="true"/>
+    <Action ID="reportVictim"
+            editable="true">
+      <input_port name="victim_location"/>
+      <input_port name="victim_found"/>
+      <output_port name="success"/>
+    </Action>
+    <Condition ID="victimReported"
+               editable="true"/>
+  </TreeNodesModel>
+
+</root>
