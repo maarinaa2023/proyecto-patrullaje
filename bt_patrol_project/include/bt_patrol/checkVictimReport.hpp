@@ -1,3 +1,4 @@
+/*
 #ifndef BT_PATROL__CHECKVICTIMREPORT_HPP_
 #define BT_PATROL__CHECKVICTIMREPORT_HPP_
 
@@ -44,3 +45,4 @@ private:
 }  // namespace bt_patrol
 
 #endif  // BT_PATROL__CHECKVICTIMREPORT_HPP_
+*/

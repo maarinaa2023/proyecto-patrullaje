@@ -1,17 +1,24 @@
 cmake_minimum_required(VERSION 3.5)
-project(bt_patrol)
+project(bt_patrol_project)
 
-set(CMAKE_CONFIG_PATH ${CMAKE_MODULE_PATH}  "${CMAKE_CURRENT_LIST_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CONFIG_PATH}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
-
 find_package(nav2_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(kobuki_ros_interfaces REQUIRED)
+
+find_package(ZMQ)
+if(ZMQ_FOUND)
+    message(STATUS "ZeroMQ found.")
+    add_definitions(-DZMQ_FOUND)
+else()
+  message(WARNING "ZeroMQ NOT found. Not including PublisherZMQ.")
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -21,6 +28,8 @@ set(dependencies
     ament_index_cpp
     nav2_msgs
     rclcpp_action
+    rosidl_default_generators
+    kobuki_ros_interfaces
 )
 
 include_directories(include ${ZMQ_INCLUDE_DIRS})
@@ -58,12 +67,13 @@ foreach(bt_plugin ${plugin_libs})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
 endforeach()
 
-add_executable(bt_patrol src/bt_patrol_main.cpp)
-ament_target_dependencies(bt_patrol ${dependencies})
+add_executable(patrol src/bt_patrol_main.cpp)
+ament_target_dependencies(patrol ${dependencies})
+target_link_libraries(patrol ${ZMQ_LIBRARIES})
 
 install(TARGETS
   ${plugin_libs}
-  bt_patrol
+  patrol
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -79,9 +89,17 @@ install(DIRECTORY
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/patrol_msgs.msg"
+  "msg/Patrolmsgs.msg"
 )
-rosidl_target_interfaces(bt_patrol ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+# Replaced deprecated rosidl_target_interfaces with the recommended approach
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(patrol "${cpp_typesupport_target}")
+
+ament_export_dependencies(rosidl_default_runtime)
+
+ament_export_include_directories(include)
+ament_export_dependencies(${dependencies})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -91,11 +109,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
 endif()
-
-ament_export_dependencies(rosidl_default_runtime)
-
-ament_export_include_directories(include)
-ament_export_dependencies(${dependencies})
-
 
 ament_package()

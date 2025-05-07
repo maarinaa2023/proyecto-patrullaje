@@ -1,3 +1,4 @@
+/*
 #include <string>
 #include <utility>
 
@@ -20,25 +21,24 @@ checkVictimReport::(
 {
   config().blackboard->get("node", node_);
 
-  /* TO DO: get topic info from victim_report_state
+  // TO DO: get topic info from victim_report_state
   
   comms_sub_ = node_->create_subscription<sensor_msgs::msg::LaserScan>(
     "/input_scan", 100, std::bind(&IsObstacle::laser_callback, this, _1));
 
   last_reading_time_ = node_->now();
-  */
+  
 }
-/*
+
 void
 IsObstacle::laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
 {
   last_scan_ = std::move(msg);
 }
-*/
+
 BT::NodeStatus
 IsObstacle::tick()
 {
-  /*
   if (last_scan_ == nullptr) {
     return BT::NodeStatus::FAILURE;
   }
@@ -66,7 +66,7 @@ IsObstacle::tick()
   //     last_scan_->ranges[last_scan_->ranges.size() / 2]);
   //   return BT::NodeStatus::FAILURE;
   // }
-  */
+
 }
 
 }  // namespace bt_patrol
@@ -76,3 +76,5 @@ BT_REGISTER_NODES(factory)
 {
   factory.registerNodeType<bt_patrol::checkVictimReport>("checkVictimReport");
 }
+
+*/
