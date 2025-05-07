@@ -5,14 +5,13 @@
     <Fallback>
       <ReactiveSequence name="PatrolMode">
         <Inverter>
-          <victimReported/>
+          <checkVictimReport/>
         </Inverter>
         <Fallback>
           <Sequence name="checkSection">
             <Inverter>
-              <IsInAssignedSection current_section=""
-                                   assigned_section=""
-                                   is_in_section=""/>
+              <checkCurrentSection current_section=""
+                                   assigned_section=""/>
             </Inverter>
             <NavigateToAssignedSection section="{assigned_section}"
                                        success=""/>
@@ -36,10 +35,10 @@
                           success=""/>
         <ReactiveSequence>
           <Inverter>
-            <allInSectionV/>
+            <isEveryoneHere/>
           </Inverter>
-          <AreAllRobotsPresent all_robots_present="{all_robots_present}"
-                               present=""/>
+          <checkPositions all_robots_here="{all_robots_here}"
+                          here=""/>
         </ReactiveSequence>
         <ResetVictimReport success=""/>
         <PerformSynchronization success=""/>
@@ -51,23 +50,9 @@
 
   <!-- Description of Node Models (used by Groot) -->
   <TreeNodesModel>
-    <Action ID="AreAllRobotsPresent">
-      <input_port name="all_robots_present"
-                  type="bool"/>
-      <output_port name="present"
-                   type="bool"/>
-    </Action>
     <Action ID="GetVictimLocation">
       <output_port name="rescue_location"
                    type="Point3D"/>
-    </Action>
-    <Action ID="IsInAssignedSection">
-      <input_port name="current_section"
-                  type="int"/>
-      <input_port name="assigned_section"
-                  type="int"/>
-      <output_port name="is_in_section"
-                   type="bool"/>
     </Action>
     <Action ID="MoveInSection">
       <input_port name="section"
@@ -107,7 +92,19 @@
       <output_port name="victim_location"
                    type="Point3D"/>
     </Action>
-    <Condition ID="allInSectionV"
+    <Condition ID="checkCurrentSection"
+               editable="true">
+      <input_port name="current_section"/>
+      <input_port name="assigned_section"/>
+    </Condition>
+    <Action ID="checkPositions"
+            editable="true">
+      <input_port name="all_robots_here"/>
+      <output_port name="here"/>
+    </Action>
+    <Condition ID="checkVictimReport"
+               editable="true"/>
+    <Condition ID="isEveryoneHere"
                editable="true"/>
     <Action ID="reportVictim"
             editable="true">
@@ -115,8 +112,6 @@
       <input_port name="victim_found"/>
       <output_port name="success"/>
     </Action>
-    <Condition ID="victimReported"
-               editable="true"/>
   </TreeNodesModel>
 
 </root>
