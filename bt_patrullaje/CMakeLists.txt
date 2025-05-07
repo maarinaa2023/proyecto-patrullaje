@@ -78,6 +78,11 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/patrols.msg"
+)
+rosidl_target_interfaces(patrol ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
@@ -86,11 +91,6 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
 endif()
-
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/YourMessage.msg"
-  # Add other message files if needed
-)
 
 ament_export_dependencies(rosidl_default_runtime)
 

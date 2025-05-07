@@ -1,6 +1,6 @@
 # BT Patrullaje
 
-Behaviour Tree para comportamiento sistema de patrullaje
+Behaviour Tree para comportamiento sistema de patrullaje.
 
 # Overview
 

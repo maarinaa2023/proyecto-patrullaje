@@ -2,7 +2,7 @@
 #include <utility>
 
 #include "bt_patrol/checkVictimReport.hpp"
-
+#include "bt_patrullaje/msg/patrols.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
 #include "sensor_msgs/msg/laser_scan.hpp"
@@ -23,7 +23,7 @@ checkVictimReport::(
 
   /* TO DO: get topic info from victim_report_state
   
-  laser_sub_ = node_->create_subscription<sensor_msgs::msg::LaserScan>(
+  comms_sub_ = node_->create_subscription<sensor_msgs::msg::LaserScan>(
     "/input_scan", 100, std::bind(&IsObstacle::laser_callback, this, _1));
 
   last_reading_time_ = node_->now();
