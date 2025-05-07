@@ -9,6 +9,7 @@ find_package(rclcpp REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
 find_package(nav2_msgs REQUIRED)
 
@@ -77,7 +78,6 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
@@ -87,7 +87,15 @@ if(BUILD_TESTING)
 
 endif()
 
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/YourMessage.msg"
+  # Add other message files if needed
+)
+
+ament_export_dependencies(rosidl_default_runtime)
+
 ament_export_include_directories(include)
 ament_export_dependencies(${dependencies})
+
 
 ament_package()
