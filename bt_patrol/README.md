@@ -10,4 +10,4 @@ La comunicacion entre robots se realiza mediante topicos en una red compartida (
 
 ![alt text][logo]
 
-[logo]: https://github.com/maarinaa2023/proyecto-patrullaje/blob/main/bt_patrullaje/doc/patrolBT.jpg "mapaBT"
+[logo]: https://github.com/maarinaa2023/proyecto-patrullaje/blob/main/bt_patrol/doc/patrolBT.jpg "mapaBT"
