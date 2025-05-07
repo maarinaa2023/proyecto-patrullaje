@@ -15,8 +15,11 @@ La comunicacion entre robots se realiza mediante topicos en una red compartida (
 # Instalation
 
 Antes de realizar la copia del repositorio en tu espacio de trabajo, es necesario tener estos paquetes instalados:
-    - [behaviortree_cpp_v3](https://github.com/BehaviorTree/behaviortree_cpp_v3-release)
-    - [libzmq3-dev](https://github.com/zeromq/libzmq)
+
+[behaviortree_cpp_v3](https://github.com/BehaviorTree/behaviortree_cpp_v3-release)
+
+[libzmq3-dev](https://github.com/zeromq/libzmq)
+
 Esto se puede hacer mediante los siguientes comandos:
 
 ```
@@ -33,6 +36,5 @@ cd my_new_workspace
 mkdir src
 cd src
 git clone https://github.com/maarinaa2023/proyecto-patrullaje.git
-
 ```
 
