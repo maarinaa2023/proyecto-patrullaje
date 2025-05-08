@@ -1,9 +1,9 @@
-/*
+
 #include <string>
 #include <utility>
 
 #include "bt_patrol/checkVictimReport.hpp"
-#include "bt_patrullaje/msg/patrol_msgs.hpp"
+#include "patrol_msgs/msg/patrol_msgs.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
 #include "rclcpp/rclcpp.hpp"
@@ -24,14 +24,14 @@ checkVictimReport::(
   // TO DO: get topic info from victim_report_state
   
   comms_sub_ = node_->create_subscription<sensor_msgs::msg::LaserScan>(
-    "/input_scan", 100, std::bind(&IsObstacle::laser_callback, this, _1));
+    "/topic", 100, std::bind(&checkVictimReport::report_state_callback, this, _1));
 
   last_reading_time_ = node_->now();
   
 }
 
 void
-IsObstacle::laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
+checkVictimReport::report_state_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
 {
   last_scan_ = std::move(msg);
 }
@@ -57,15 +57,6 @@ IsObstacle::tick()
   }
   RCLCPP_INFO(node_->get_logger(), "No obstacle detected");
   return BT::NodeStatus::FAILURE;
-  // if (last_scan_->ranges[last_scan_->ranges.size() / 2] < distance) {
-  //   RCLCPP_INFO(node_->get_logger(), "Obstacle detected at %f meters",
-  //     last_scan_->ranges[last_scan_->ranges.size() / 2]);
-  //   return BT::NodeStatus::SUCCESS;
-  // } else {
-  //   RCLCPP_INFO(node_->get_logger(), "Closest obstacle is at %f meters",
-  //     last_scan_->ranges[last_scan_->ranges.size() / 2]);
-  //   return BT::NodeStatus::FAILURE;
-  // }
 
 }
 
@@ -77,4 +68,3 @@ BT_REGISTER_NODES(factory)
   factory.registerNodeType<bt_patrol::checkVictimReport>("checkVictimReport");
 }
 
-*/
