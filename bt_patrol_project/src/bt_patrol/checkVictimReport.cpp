@@ -11,60 +11,60 @@
 namespace bt_patrol
 {
 
+// topic_name = "/patrol/victim_report_state"
+
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
 checkVictimReport::(
-  const std::string & xml_tag_name,
-  const BT::NodeConfiguration & conf)
-: BT::ConditionNode(xml_tag_name, conf)
+  const std::string& name, 
+    const BT::NodeConfiguration& config, 
+    rclcpp::Node::SharedPtr node_ptr,
+    const std::string& topic_name,
+    std::function<bool(const patrol_msgs::msg::PatrolMsgs::SharedPtr)> condition_function)
+  : BT::ConditionNode(name, config), 
+    node_ptr_(node_ptr),
+    topic_name_(topic_name),
+    condition_function_(condition_function)
 {
-  config().blackboard->get("node", node_);
-
-  // TO DO: get topic info from victim_report_state
-  
-  comms_sub_ = node_->create_subscription<sensor_msgs::msg::LaserScan>(
-    "/topic", 100, std::bind(&checkVictimReport::report_state_callback, this, _1));
-
-  last_reading_time_ = node_->now();
-  
+  // Create subscription to the topic
+  subscription_ = node_ptr_->create_subscription<patrol_msgs::msg::PatrolMsgs>(
+    topic_name_, 10, 
+    std::bind(&checkVictimNode::topic_callback, this, std::placeholders::_1));
+    
+  RCLCPP_INFO(node_ptr_->get_logger(), "checkVictimNode subscribing to %s", topic_name_.c_str());
 }
 
-void
-checkVictimReport::report_state_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
+BT::PortsList checkVictimReport::providedPorts()
 {
-  last_scan_ = std::move(msg);
+  // No ports required
+  return {};
 }
 
-BT::NodeStatus
-IsObstacle::tick()
+BT::NodeStatus checkVictimNode::tick()
 {
-  if (last_scan_ == nullptr) {
+  // Check if we've received any messages yet
+  if (!message_received_) {
+    RCLCPP_DEBUG(node_ptr_->get_logger(), "Waiting for message on topic %s", topic_name_.c_str());
     return BT::NodeStatus::FAILURE;
   }
-  double distance = 1.0;
-  getInput("distance", distance);
-  for (size_t pos = last_scan_->ranges.size() / 2 - 50;
-    pos < last_scan_->ranges.size() / 2 + 50;
-    pos++)
-  {
-    if (last_scan_->ranges[pos] < distance) {
-      RCLCPP_INFO(
-        node_->get_logger(), "Obstacle detected at %.2f meters (dist=%.2f, pos=%zu)",
-        last_scan_->ranges[pos], distance, pos);
-      return BT::NodeStatus::SUCCESS;
-    }
-  }
-  RCLCPP_INFO(node_->get_logger(), "No obstacle detected");
-  return BT::NodeStatus::FAILURE;
 
+  // Return the result based on the last evaluation
+  return condition_result_ ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
+}
+
+void checkVictimNode::topic_callback(const patrol_msgs::msg::PatrolMsgs::SharedPtr msg)
+{
+  last_message_ = msg;
+  message_received_ = true;
+  
+  // Evaluate the condition function with the received message
+  condition_result_ = condition_function_(msg.victim_report);
+  
+  RCLCPP_DEBUG(node_ptr_->get_logger(), 
+               "Received message on %s, condition evaluated to: %s", 
+               topic_name_.c_str(), 
+               condition_result_ ? "true" : "false");
 }
 
 }  // namespace bt_patrol
-
-#include "behaviortree_cpp_v3/bt_factory.h"
-BT_REGISTER_NODES(factory)
-{
-  factory.registerNodeType<bt_patrol::checkVictimReport>("checkVictimReport");
-}
-

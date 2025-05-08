@@ -1,48 +1,42 @@
-/*
-#ifndef BT_PATROL__CHECKVICTIMREPORT_HPP_
-#define BT_PATROL__CHECKVICTIMREPORT_HPP_
+#ifndef CHECK_VICTIM_REPORT_HPP
+#define CHECK_VICTIM_REPORT_HPP
 
 #include <string>
+#include <memory>
+#include <functional>
 
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-
-#include "bt_patrullaje/msg/patrol_msgs.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "behaviortree_cpp_v3/condition_node.h"
+#include "patrol_msgs/msg/patrol_msgs.hpp" 
 
-namespace bt_patrol
+namespace my_bt_patrol
 {
 
 class checkVictimReport : public BT::ConditionNode
 {
 public:
-  explicit checkVictimReport(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  checkVictimReport(const std::string& name, 
+                     const BT::NodeConfiguration& config, 
+                     rclcpp::Node::SharedPtr node_ptr,
+                     const std::string& topic_name,
+                     std::function<bool(const patrol_msgs::msg::PatrolMsgs::SharedPtr)> condition_function);
 
-  BT::NodeStatus tick();
+  static BT::PortsList providedPorts();
 
-  static BT::PortsList providedPorts()
-  {
-    return BT::PortsList(
-      {
-        // no input needed
-        //BT::InputPort<double>("distance")
-      });
-  }
-
-  // void laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg);
+  BT::NodeStatus tick() override;
 
 private:
-  rclcpp::Node::SharedPtr node_;
-  //TO DO: add server_topics suscriber.... for the victim_report_state
-  //rclcpp::Time last_reading_time_;
-  //rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_sub_;
-  bt_patrullaje::msg::patrol_msgs::UniquePtr last_msg_; // Ultimo mensaje recibido
+  void topic_callback(const patrol_msgs::msg::String::SharedPtr msg);
 
+  rclcpp::Node::SharedPtr node_ptr_;
+  rclcpp::Subscription<patrol_msgs::msg::String>::SharedPtr subscription_;
+  std::string topic_name_;
+  std::function<bool(const patrol_msgs::msg::String::SharedPtr)> condition_function_;
+  patrol_msgs::msg::String::SharedPtr last_message_;
+  bool message_received_ = false;
+  bool condition_result_ = false;
 };
 
-}  // namespace bt_patrol
+}  // namespace my_bt_patrol
 
-#endif  // BT_PATROL__CHECKVICTIMREPORT_HPP_
-*/
+#endif  // CHECK_VICTIM_REPORT_HPP
