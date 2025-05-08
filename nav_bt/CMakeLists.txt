@@ -1,20 +1,17 @@
 cmake_minimum_required(VERSION 3.5)
 project(nav_bt)
 
-set(CMAKE_CONFIG_PATH ${CMAKE_MODULE_PATH}  "${CMAKE_CURRENT_LIST_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CONFIG_PATH}")
-
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(patrol_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(nav2_util REQUIRED)
 
 find_package(nav2_msgs REQUIRED)
 
@@ -27,16 +24,17 @@ set(dependencies
     nav2_msgs
     rclcpp_action
     geometry_msgs
-    patrol_msgs
     OpenCV
+    builtin_interfaces
+    std_msgs
+    rosidl_default_runtime
+    rosidl_default_generators
+    nav2_util
+
 )
 
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/PatrolMessage.msg"
-  DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
-)
-
-include_directories(include ${ZMQ_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(include ${OpenCV_INCLUDE_DIRS})
 
 add_library(getwp_bt_node SHARED src/nav_bt/GetWaypoint.cpp)
 add_library(move_bt_node SHARED src/nav_bt/Move.cpp)
@@ -53,11 +51,12 @@ list(APPEND plugin_libs
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
+  target_link_libraries(${bt_plugin} "${cpp_typesupport_target}")
 endforeach()
 
 add_executable(navigate src/nav_bt_main.cpp)
 ament_target_dependencies(navigate ${dependencies})
-
+target_link_libraries(navigate ${OpenCV_LIBS})
 
 install(TARGETS
   ${plugin_libs}
@@ -76,6 +75,19 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/PatrolMessage.msg"
+)
+
+# Replaced deprecated rosidl_target_interfaces with the recommended approach
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(navigate "${cpp_typesupport_target}")
+
+ament_export_dependencies(rosidl_default_runtime)
+
+ament_export_include_directories(include)
+ament_export_dependencies(${dependencies})
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -85,8 +97,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
 endif()
-
-ament_export_include_directories(include)
-ament_export_dependencies(${dependencies})
 
 ament_package()

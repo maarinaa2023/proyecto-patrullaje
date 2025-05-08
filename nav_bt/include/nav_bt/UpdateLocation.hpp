@@ -24,7 +24,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
-#include "patrol_msgs/msg/patrol_message.hpp"
+#include "nav_bt/msg/patrol_message.hpp"
 
 namespace nav_bt
 {

@@ -14,7 +14,7 @@
 
 #include <cmath>
 #include "geometry_msgs/msg/pose_stamped.hpp"
-#include "msg/patrol_message.hpp"
+#include "nav_bt/msg/patrol_message.hpp"
 
 #include "nav_bt/UpdateLocation.hpp"
 
@@ -26,7 +26,7 @@ UpdateLocation::UpdateLocation(
   const BT::NodeConfiguration & conf)
 : BT::SyncActionNode(xml_tag_name, conf)
 {
-  pub_ = node_->create_publisher<patrol_msgs::msg::PatrolMessage>("patrol_message", 10);
+  pub_ = node_->create_publisher<nav_bt::msg::PatrolMessage>("patrol_message", 10);
 }
 
 void
