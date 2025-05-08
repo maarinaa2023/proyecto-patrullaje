@@ -1,0 +1,30 @@
+kobuki_patroller:
+  ros__parameters:
+    active_zone: "zone_a"
+
+    zone_a.pt1.x: -8.467
+    zone_a.pt1.y: -0.545
+    zone_a.pt2.x: -7.641
+    zone_a.pt2.y: 2.054
+    zone_a.pt3.x: -4.615
+    zone_a.pt3.y: 1.902
+    zone_a.pt4.x: -3.254
+    zone_a.pt4.y: -1.070
+
+    zone_b.pt1.x: -8.481
+    zone_b.pt1.y: -2.136
+    zone_b.pt2.x: -8.711
+    zone_b.pt2.y: -3.803
+    zone_b.pt3.x: -3.543
+    zone_b.pt3.y: -4.566
+    zone_b.pt4.x: -2.800
+    zone_b.pt4.y: -3.900
+
+    zone_c.pt1.x: -5.330
+    zone_c.pt1.y: 2.539
+    zone_c.pt2.x: 8.443
+    zone_c.pt2.y: 2.439
+    zone_c.pt3.x: 8.151
+    zone_c.pt3.y: -4.382
+    zone_c.pt4.x: 5.497
+    zone_c.pt4.y: -4.529

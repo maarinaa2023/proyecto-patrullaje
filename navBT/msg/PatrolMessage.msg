@@ -1,0 +1,5 @@
+# Tipo de mensaje entre robots patrulla
+
+bool victim_report          # estado de reporte de victimas
+int32[2] victim_location    # localizacion x,y de victima
+bool robot_in_location      # estado posicion robot respecto a victima
