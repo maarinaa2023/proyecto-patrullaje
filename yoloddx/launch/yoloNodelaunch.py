@@ -12,12 +12,11 @@ def generate_launch_description():
     # Define arguments
     cam_arg = DeclareLaunchArgument(
         'camera',
-        default_value='color/image_raw',
+        default_value='/color/image_raw',
         description='Camera topic to use')
     
     model_arg = DeclareLaunchArgument(
         'model',
-        # default_value=model_path + '/yolov8m-pose.pt',
         default_value='yolov8m-pose.pt',
         description='Model to use',
     )
@@ -45,13 +44,32 @@ def generate_launch_description():
         "' != '' else 'yolo'"
     ])
     
-    # Camera topic with base namespace but not /yolo part
+    # First determine the camera topic based on camera arg (without namespace)
+    base_camera_topic = PythonExpression([
+        "'/rgb/image_raw' if '",
+        LaunchConfiguration('camera'),
+        "' == 'xtion' else ",
+        "'/rgbd_camera/image' if '",
+        LaunchConfiguration('camera'),
+        "' == 'simulator' else ",
+        "'/image_raw' if '",
+        LaunchConfiguration('camera'),
+        "' == 'laptop' else '",
+        LaunchConfiguration('camera'),
+        "'"
+    ])
+    
+    # Then add the namespace prefix if provided
     camera_topic = PythonExpression([
-        "'/",
+        "'/'+ '",
         base_namespace,
-        "/rgb/image_raw' if '",
+        "' + '",
+        base_camera_topic,
+        "' if '",
         LaunchConfiguration('namespace'),
-        "' != '' else '/rgb/image_raw'"
+        "' != '' else '",
+        base_camera_topic,
+        "'"
     ])
     
     # Model selection with proper quotes
@@ -62,6 +80,7 @@ def generate_launch_description():
         "'" + model_path + "/yolov8m-seg.pt' if '",
         LaunchConfiguration('model'),
         "' == 'seg' else '",
+        model_path + "/",
         LaunchConfiguration('model'),
         "'"
     ])
