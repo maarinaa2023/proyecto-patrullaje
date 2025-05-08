@@ -8,6 +8,7 @@ This project implements a DDS (Data Distribution Service) server for managing co
 
 - ROS 2 (Robot Operating System 2)
 - Fast DDS (Fast Data Distribution Service)
+- Have all ros2 instances connected to the same red (We recommend using Wireguard, for more information check `vpn/`)
 
 ## Usage
 
