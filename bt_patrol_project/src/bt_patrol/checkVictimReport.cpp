@@ -3,7 +3,7 @@
 #include <utility>
 
 #include "bt_patrol/checkVictimReport.hpp"
-#include "bt_patrullaje/msg/patrol_msgs.hpp"
+#include "patrol_msgs/msg/patrol_msgs.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
 #include "rclcpp/rclcpp.hpp"

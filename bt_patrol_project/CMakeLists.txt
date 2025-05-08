@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(bt_patrol_project)
 
-#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -11,14 +10,8 @@ find_package(rclcpp_action REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(kobuki_ros_interfaces REQUIRED)
+find_package(patrol_msgs REQUIRED)
 
-#find_package(ZMQ)
-#if(ZMQ_FOUND)
-#    message(STATUS "ZeroMQ found.")
-#    add_definitions(-DZMQ_FOUND)
-#else()
-#  message(WARNING "ZeroMQ NOT found. Not including PublisherZMQ.")
-#endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -29,10 +22,10 @@ set(dependencies
     nav2_msgs
     rclcpp_action
     rosidl_default_generators
+    rosidl_default_runtime  
     kobuki_ros_interfaces
+    patrol_msgs
 )
-
-#include_directories(include ${ZMQ_INCLUDE_DIRS})
 
 add_library(check_curr_section_node SHARED src/bt_patrol/checkCurrentSection.cpp)
 add_library(check_others_node SHARED src/bt_patrol/checkOtherPositions.cpp)
@@ -69,7 +62,6 @@ endforeach()
 
 add_executable(patrol src/bt_patrol_main.cpp)
 ament_target_dependencies(patrol ${dependencies})
-#target_link_libraries(patrol ${ZMQ_LIBRARIES})
 
 install(TARGETS
   ${plugin_libs}
@@ -82,19 +74,13 @@ install(TARGETS
 install(DIRECTORY include/
   DESTINATION include/
 )
+include_directories(include)
 
 install(DIRECTORY
   behaviour_tree_xml
   DESTINATION share/${PROJECT_NAME}
 )
 
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Patrolmsgs.msg"
-)
-
-# Replaced deprecated rosidl_target_interfaces with the recommended approach
-rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(patrol "${cpp_typesupport_target}")
 
 ament_export_dependencies(rosidl_default_runtime)
 
