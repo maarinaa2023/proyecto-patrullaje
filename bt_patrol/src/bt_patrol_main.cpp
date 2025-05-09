@@ -20,18 +20,12 @@ int main(int argc, char * argv[])
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("check_curr_section_node"));
-  factory.registerFromPlugin(loader.getOSName("check_others_node"));
-  factory.registerFromPlugin(loader.getOSName("check_victims_node"));
-  factory.registerFromPlugin(loader.getOSName("get_victim_loc_node"));
+  factory.registerFromPlugin(loader.getOSName("check_report_node"));
   factory.registerFromPlugin(loader.getOSName("everyone_here_node"));
-  factory.registerFromPlugin(loader.getOSName("look_victim_node"));
-  factory.registerFromPlugin(loader.getOSName("move_in_section_node"));
-  factory.registerFromPlugin(loader.getOSName("nav2_assigned_section_node"));
-  factory.registerFromPlugin(loader.getOSName("nav2_victim_location_node"));
   factory.registerFromPlugin(loader.getOSName("report_victim_node"));
-  factory.registerFromPlugin(loader.getOSName("reset_victims_node"));
-  factory.registerFromPlugin(loader.getOSName("synchronization_node"));
+  factory.registerFromPlugin(loader.getOSName("reset_victim_node"));
+  factory.registerFromPlugin(loader.getOSName("get_waypoint_node"));
+  factory.registerFromPlugin(loader.getOSName("move_node"));
 
   std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_patrol");
   std::string xml_file = pkgpath + "/behaviour_tree_xml/patrol.xml";
