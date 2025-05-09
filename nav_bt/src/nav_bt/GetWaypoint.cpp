@@ -20,6 +20,7 @@
 
 #include "nav_bt/GetWaypoint.hpp"
 
+#include "ament_index_cpp/get_package_share_directory.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -35,24 +36,27 @@ GetWaypoint::GetWaypoint(
   const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(xml_tag_name, conf)
 {
-  rclcpp::Node::SharedPtr node;
-  config().blackboard->get("node", node);
+  config().blackboard->get("node", node_);
 
   // Puntos para patrullar la zona A
-  declare_parameter("active_zone", active_zone);
-  get_parameter("active_zone", active_zone);
+  node_->declare_parameter("active_zone", active_zone);
+  node_->get_parameter("active_zone", active_zone);
 
+  RCLCPP_INFO(node_->get_logger(), "Zona activa: %s", active_zone.c_str());
+
+  // Limpiar el polígono
   polygon.clear();
   for (int i = 1; i <= 4; ++i) {
     std::string x_key = active_zone + ".pt" + std::to_string(i) + ".x";
     std::string y_key = active_zone + ".pt" + std::to_string(i) + ".y";
 
     double x, y;
-    declare_parameter(x_key, rclcpp::ParameterValue(0.0));
-    declare_parameter(y_key, rclcpp::ParameterValue(0.0));
-    get_parameter(x_key, x);
-    get_parameter(y_key, y);
+    node_->declare_parameter(x_key, rclcpp::ParameterValue(0.0));
+    node_->declare_parameter(y_key, rclcpp::ParameterValue(0.0));
+    node_->get_parameter(x_key, x);
+    node_->get_parameter(y_key, y);
 
+    RCLCPP_INFO(node_->get_logger(), "Punto %d: (%.3f, %.3f)", i, x, y);
     polygon.emplace_back(x, y);
   }
 }
@@ -70,7 +74,7 @@ GetWaypoint::tick()
   return BT::NodeStatus::SUCCESS;
 }
 
-geometry_msgs::msg::PoseStamped MoveInSection::generate_random_pose()
+geometry_msgs::msg::PoseStamped GetWaypoint::generate_random_pose()
 {
   double min_x = std::numeric_limits<double>::max();
   double max_x = std::numeric_limits<double>::lowest();
@@ -89,15 +93,22 @@ geometry_msgs::msg::PoseStamped MoveInSection::generate_random_pose()
   std::uniform_real_distribution<> x_dist(min_x, max_x);
   std::uniform_real_distribution<> y_dist(min_y, max_y);
 
-  // Cargar el mapa
-  cv::Mat map_image = cv::imread("/src/kobuki/maps/aws_lab.pgm", cv::IMREAD_GRAYSCALE);
+  // Obtener la ruta del paquete que contiene el mapa
+std::string package_share_directory = ament_index_cpp::get_package_share_directory("kobuki");
+
+// Construir la ruta completa al archivo del mapa
+
+std::string map_path = package_share_directory + "/maps/aws_lab.pgm";
+
+// Leer el mapa
+cv::Mat map_image = cv::imread(map_path, cv::IMREAD_GRAYSCALE);
   double map_resolution = 0.05;  // cambiar según tu mapa.yaml
-  double origin_x = -41.2;       // cambiar según tu mapa.yaml
-  double origin_y = -44.8;
+  double origin_x = -9.62;       // cambiar según tu mapa.yaml
+  double origin_y = -5.83;
 
   if (map_image.empty())
   {
-    RCLCPP_ERROR(this->get_logger(), "No se pudo cargar el mapa para validación.");
+    RCLCPP_ERROR(node_->get_logger(), "No se pudo cargar el mapa para validación.");
     return create_pose(min_x, min_y);  // fallback
   }
 
@@ -112,17 +123,27 @@ geometry_msgs::msg::PoseStamped MoveInSection::generate_random_pose()
     rand_y = y_dist(gen);
     attempts++;
 
+    // Imprimir los valores aleatorios generados
+    RCLCPP_INFO(node_->get_logger(), "Intento %d: rand_x = %.3f, rand_y = %.3f", attempts, rand_x, rand_y);
+
     if (!point_in_polygon(rand_x, rand_y, polygon)) continue;
 
     // Convertir coordenada mundial a pixel
     int pixel_x = static_cast<int>((rand_x - origin_x) / map_resolution);
     int pixel_y = map_image.rows - static_cast<int>((rand_y - origin_y) / map_resolution);
 
+    // Imprimir las coordenadas de píxeles
+    RCLCPP_INFO(node_->get_logger(), "Pixel coords: (%d, %d)", pixel_x, pixel_y);
+
     if (pixel_x < 0 || pixel_x >= map_image.cols || pixel_y < 0 || pixel_y >= map_image.rows)
         continue;
 
     // Validar que el píxel no sea obstáculo (normalmente 0 es negro = obstáculo)
-    if (map_image_.at<uchar>(py, px) > 200) {
+    int pixel_value = static_cast<int>(map_image.at<uchar>(pixel_y, pixel_x));
+    RCLCPP_INFO(node_->get_logger(), "Valor del píxel: %d", pixel_value);
+
+    // Validar que el píxel no sea obstáculo (normalmente 0 es negro = obstáculo)
+    if (map_image.at<uchar>(pixel_y, pixel_x) > 100) {
       pose.header.frame_id = "map";
       pose.header.stamp = node_->now();
       pose.pose.position.x = rand_x;
@@ -141,7 +162,7 @@ geometry_msgs::msg::PoseStamped MoveInSection::generate_random_pose()
   return pose;
 }
 
-bool MoveInSection::point_in_polygon(double x, double y, const std::vector<std::pair<double, double>> & polygon)
+bool GetWaypoint::point_in_polygon(double x, double y, const std::vector<std::pair<double, double>> & polygon)
 {
   int n = polygon.size();
   bool inside = false;
@@ -156,6 +177,16 @@ bool MoveInSection::point_in_polygon(double x, double y, const std::vector<std::
       inside = !inside;
   }
   return inside;
+}
+
+geometry_msgs::msg::PoseStamped GetWaypoint::create_pose(double x, double y) {
+  geometry_msgs::msg::PoseStamped pose;
+  pose.header.frame_id = "map";
+  pose.header.stamp = node_->now();
+  pose.pose.position.x = x;
+  pose.pose.position.y = y;
+  pose.pose.orientation.w = 1.0; // Sin rotación
+  return pose;
 }
 
 

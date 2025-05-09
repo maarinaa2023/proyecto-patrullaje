@@ -25,32 +25,29 @@
 #include "nav_bt/ctrl_support/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "nav2_behavior_tree/bt_action_node.hpp"
 
 namespace nav_bt
 {
 
-class CheckZone : public nav_bt::BtActionNode<nav2_msgs::action::NavigateToPose>
+class CheckZone : public BT::ConditionNode
 {
 public:
   explicit CheckZone(
     const std::string & xml_tag_name,
-    const std::string & action_name,
     const BT::NodeConfiguration & conf);
 
-  void on_tick() override;
-  BT::NodeStatus on_success() override;
+  BT::NodeStatus tick() override;
 
   static BT::PortsList providedPorts()
   {
     return BT::PortsList(
       {
-        BT::InputPort<geometry_msgs::msg::PoseStamped>("goal")
+        BT::InputPort<geometry_msgs::msg::PoseStamped>("current_pose")
       });
   }
 
 private:
-  rclcpp::Node::SharedPtr node;
+  rclcpp::Node::SharedPtr node_;
 };
 
 

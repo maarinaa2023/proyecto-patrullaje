@@ -26,7 +26,6 @@
 #include "nav_bt/ctrl_support/BTActionNode.hpp"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "nav2_behavior_tree/bt_action_node.hpp"
 
 namespace nav_bt
 {

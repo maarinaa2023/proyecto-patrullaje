@@ -15,9 +15,12 @@
 #ifndef NAV_BT__GETWAYPOINT_HPP_
 #define NAV_BT__GETWAYPOINT_HPP_
 
-#include <vector>
-#include <string>
 #include <utility>
+#include <string>
+#include <iostream>
+#include <vector>
+#include <random>
+#include <limits>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -57,6 +60,7 @@ private:
 
   geometry_msgs::msg::PoseStamped generate_random_pose();
   bool point_in_polygon(double x, double y, const std::vector<std::pair<double, double>> & polygon);
+  geometry_msgs::msg::PoseStamped create_pose(double x, double y);
 };
 
 }  // namespace nav_bt

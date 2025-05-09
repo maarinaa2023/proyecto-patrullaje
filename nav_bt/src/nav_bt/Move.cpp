@@ -31,7 +31,15 @@ Move::on_tick()
   geometry_msgs::msg::PoseStamped goal;
   getInput("goal", goal);
 
+  // Validación adicional si quieres asegurarte de que el goal no sea cero
+  if (std::isnan(goal.pose.position.x) || std::isnan(goal.pose.position.y)) {
+    throw BT::RuntimeError("Goal position contains NaN");
+  }
+
   goal_.pose = goal;
+
+  RCLCPP_INFO(node_->get_logger(), "Moving to goal: [%.2f, %.2f]",
+            goal.pose.position.x, goal.pose.position.y);
 }
 
 BT::NodeStatus

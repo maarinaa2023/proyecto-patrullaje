@@ -43,16 +43,12 @@ add_library(check_report_node SHARED src/bt_patrol/CheckReport.cpp)
 add_library(everyone_here_node SHARED src/bt_patrol/IsEveryoneHere.cpp)
 add_library(report_victim_node SHARED src/bt_patrol/ReportVictim.cpp)
 add_library(reset_victim_node SHARED src/bt_patrol/ResetVictim.cpp)
-add_library(get_waypoint_node SHARED src/bt_patrol/GetWaypoint.cpp)
-add_library(move_node SHARED src/bt_patrol/Move.cpp)
 
 list(APPEND plugin_libs
   check_report_node
   everyone_here_node
   report_victim_node
   reset_victim_node
-  get_waypoint_node
-  move_node
 )
 
 foreach(bt_plugin ${plugin_libs})
@@ -64,13 +60,9 @@ endforeach()
 add_executable(patrol src/bt_patrol_main.cpp)
 ament_target_dependencies(patrol ${dependencies})
 
-add_executable(navigate src/nav_bt_main.cpp)
-ament_target_dependencies(navigate ${dependencies})
-
 install(TARGETS
   ${plugin_libs}
   patrol
-  navigate
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -83,8 +75,6 @@ include_directories(include)
 
 install(DIRECTORY
   behaviour_tree_xml
-  config
-  launch
   DESTINATION share/${PROJECT_NAME}
 )
 
