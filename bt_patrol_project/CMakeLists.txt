@@ -27,32 +27,16 @@ set(dependencies
     patrol_msgs
 )
 
-add_library(check_curr_section_node SHARED src/bt_patrol/checkCurrentSection.cpp)
-add_library(check_others_node SHARED src/bt_patrol/checkOtherPositions.cpp)
-add_library(check_victims_node SHARED src/bt_patrol/checkVictimReport.cpp)
-add_library(get_victim_loc_node SHARED src/bt_patrol/getVictimLocation.cpp)
-add_library(everyone_here_node SHARED src/bt_patrol/isEveryoneHere.cpp)
-add_library(look_victim_node SHARED src/bt_patrol/look4Victim.cpp)
-add_library(move_in_section_node SHARED src/bt_patrol/moveInSection.cpp)
-add_library(nav2_assigned_section_node SHARED src/bt_patrol/nav2AssignedSection.cpp)
-add_library(nav2_victim_location_node SHARED src/bt_patrol/nav2VictimLocation.cpp)
-add_library(report_victim_node SHARED src/bt_patrol/reportVictim.cpp)
-add_library(reset_victims_node SHARED src/bt_patrol/resetVictims.cpp)
-add_library(synchronization_node SHARED src/bt_patrol/synchronization.cpp)
+add_library(check_report_node SHARED src/bt_patrol/CheckReport.cpp)
+add_library(everyone_here_node SHARED src/bt_patrol/IsEveryoneHere.cpp)
+add_library(report_victim_node SHARED src/bt_patrol/ReportVictim.cpp)
+add_library(reset_victim_node SHARED src/bt_patrol/ResetVictim.cpp)
 
 list(APPEND plugin_libs
-  check_curr_section_node
-  check_others_node
-  check_victims_node
-  get_victim_loc_node
+  check_report_node
   everyone_here_node
-  look_victim_node
-  move_in_section_node
-  nav2_assigned_section_node
-  nav2_victim_location_node
   report_victim_node
-  reset_victims_node
-  synchronization_node
+  reset_victim_node
 )
 
 foreach(bt_plugin ${plugin_libs})
@@ -80,7 +64,6 @@ install(DIRECTORY
   behaviour_tree_xml
   DESTINATION share/${PROJECT_NAME}
 )
-
 
 ament_export_dependencies(rosidl_default_runtime)
 

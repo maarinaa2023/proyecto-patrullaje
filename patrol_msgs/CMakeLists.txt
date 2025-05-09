@@ -12,7 +12,7 @@ find_package(geometry_msgs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/PatrolMsgs.msg"
   # Add other message files
-  DEPENDENCIES std_msgs geometry_msgs
+  DEPENDENCIES geometry_msgs
 )
 
 ament_package()
