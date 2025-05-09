@@ -33,7 +33,7 @@ public:
 private:
   rclcpp::Node::SharedPtr node_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr report_sub_;
-  bool last_report_;
+  string last_report_;
 };
 
 }  // namespace bt_patrol

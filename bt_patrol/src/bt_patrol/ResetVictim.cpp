@@ -5,7 +5,6 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 
-#include "patrol_msgs/msg/patrol_msgs.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace bt_patrol
@@ -20,14 +19,14 @@ ResetVictim::ResetVictim(
 {
   config().blackboard->get("node", node_);
 
-  reset_pub_ = node_->create_publisher<patrol_msgs::msg::PatrolMsgs>("/topic", 100);
+  reset_pub_ = node_->create_publisher<std_msgs::msg::String>("/detections/zone", 100);
 }
 
 BT::NodeStatus
 ResetVictim::tick()
 {
-  patrol_msgs::msg::PatrolMsgs reset_msgs;
-  reset_msgs.victim_report = false;
+  std_msgs::msg::String reset_msgs;
+  reset_msgs.data = NULL;
   reset_pub_->publish(reset_msgs);
 
   RCLCPP_INFO(node_->get_logger(), "Victim report status changed to false");
