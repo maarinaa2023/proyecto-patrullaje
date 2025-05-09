@@ -6,7 +6,6 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 
-#include "patrol_msgs/msg/patrol_msgs.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace bt_patrol
@@ -29,11 +28,11 @@ public:
       });
   }
 
-  void report_callback(patrol_msgs::msg::PatrolMsgs::UniquePtr msg);
+  void report_callback(std_msgs::msg::String::UniquePtr msg);
 
 private:
   rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<patrol_msgs::msg::PatrolMsgs>::SharedPtr report_sub_;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr report_sub_;
   bool last_report_;
 };
 

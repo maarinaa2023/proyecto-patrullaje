@@ -6,7 +6,6 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 
-#include "patrol_msgs/msg/patrol_msgs.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace bt_patrol
@@ -29,7 +28,7 @@ public:
 
 private:
   rclcpp::Node::SharedPtr node_;
-  rclcpp::Publisher<patrol_msgs::msg::PatrolMsgs>::SharedPtr reset_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr reset_pub_;
 };
 
 }  // namespace bt_patrol

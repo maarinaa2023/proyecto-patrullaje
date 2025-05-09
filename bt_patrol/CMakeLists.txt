@@ -39,13 +39,13 @@ set(dependencies
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(include ${OpenCV_INCLUDE_DIRS})
 
-add_library(check_report_node SHARED src/bt_patrol/CheckReport.cpp)
+add_library(check_victim_node SHARED src/bt_patrol/CheckVictim.cpp)
 add_library(everyone_here_node SHARED src/bt_patrol/IsEveryoneHere.cpp)
 add_library(report_victim_node SHARED src/bt_patrol/ReportVictim.cpp)
 add_library(reset_victim_node SHARED src/bt_patrol/ResetVictim.cpp)
 
 list(APPEND plugin_libs
-  check_report_node
+  check_victim_node
   everyone_here_node
   report_victim_node
   reset_victim_node

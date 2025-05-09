@@ -1,21 +1,20 @@
-#ifndef BT_PATROL__CHECK_REPORT_HPP_
-#define BT_PATROL__CHECK_REPORT_HPP_
+#ifndef BT_PATROL__CHECK_VICTIM_HPP_
+#define BT_PATROL__CHECK_VICTIM_HPP_
 
 #include <string>
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 
-#include "patrol_msgs/msg/patrol_msgs.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace bt_patrol
 {
 
-class CheckReport : public BT::ConditionNode
+class CheckVictim : public BT::ConditionNode
 {
 public:
-  explicit CheckReport(
+  explicit CheckVictim(
     const std::string & xml_tag_name,
     const BT::NodeConfiguration & conf);
 
@@ -29,15 +28,15 @@ public:
       });
   }
 
-  void report_callback(patrol_msgs::msg::PatrolMsgs::UniquePtr msg);
+  void report_callback(std_msgs::msg::String::UniquePtr msg);
 
 private:
   rclcpp::Node::SharedPtr node_;
   rclcpp::Time last_reading_time_;
-  rclcpp::Subscription<patrol_msgs::msg::PatrolMsgs>::SharedPtr report_sub_;
-  bool last_report_;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr report_sub_;
+  string last_report_;
 };
 
 }  // namespace bt_patrol
 
-#endif  // BT_PATROL__CHECK_REPORT_HPP_
+#endif  // BT_PATROL__CHECK_VICTIM_HPP_
