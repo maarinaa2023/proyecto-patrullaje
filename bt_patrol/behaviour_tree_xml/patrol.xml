@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="3"
-      main_tree_to_execute="PatrolRescueMission">
-  <BehaviorTree ID="PatrolRescueMission">
+      main_tree_to_execute="Untitled">
+  <BehaviorTree ID="Untitled">
     <Fallback>
-      <ReactiveSequence name="PatrolMode">
+      <ReactiveSequence>
         <Inverter>
-          <checkReport/>
+          <CheckVictim/>
         </Inverter>
         <Sequence>
           <GetWaypoint waypoint="{wp}"/>
           <Move goal="{wp}"/>
-          <scan4Victim/>
-          <ReportVictim new_waypoint="{new_wp}"/>
+          <Scan4Report/>
         </Sequence>
       </ReactiveSequence>
-      <Sequence name="RescueMode">
-        <Move goal="{new_wp}"/>
+      <Sequence>
+        <RescueWaypoint waypoint="{new_wp}"/>
+        <Move goal="{new__wp}"/>
         <RetryUntilSuccessful num_attempts="-1">
-          <isEveryoneHere/>
+          <IsEveryoneHere/>
         </RetryUntilSuccessful>
         <ResetVictim/>
       </Sequence>
@@ -26,25 +26,25 @@
 
   <!-- Description of Node Models (used by Groot) -->
   <TreeNodesModel>
+    <Condition ID="CheckVictim"
+               editable="true"/>
     <Action ID="GetWaypoint"
             editable="true">
       <output_port name="waypoint"/>
     </Action>
+    <Condition ID="IsEveryoneHere"
+               editable="true"/>
     <Action ID="Move"
             editable="true">
       <input_port name="goal"/>
     </Action>
-    <Action ID="ReportVictim"
+    <Action ID="RescueWaypoint"
             editable="true">
-      <output_port name="new_waypoint"/>
+      <output_port name="waypoint"/>
     </Action>
     <Action ID="ResetVictim"
             editable="true"/>
-    <Condition ID="CheckReport"
-               editable="true"/>
-    <Condition ID="IsEveryoneHere"
-               editable="true"/>
-    <Action ID="Scan4Victim"
+    <Action ID="Scan4Report"
             editable="true"/>
   </TreeNodesModel>
 
