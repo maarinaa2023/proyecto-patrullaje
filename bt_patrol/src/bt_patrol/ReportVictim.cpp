@@ -30,6 +30,9 @@ ReportVictim::tick()
   report_msgs.victim_report = true;
   report_pub_->publish(report_msgs);
 
+  wp_ = generate_random_pose();
+  setOutput("waypoint", wp_);
+
   RCLCPP_INFO(node_->get_logger(), "Victim report status changed");
   return BT::NodeStatus::SUCCESS;
 }

@@ -40,11 +40,11 @@
     </Action>
     <Action ID="ResetVictim"
             editable="true"/>
-    <Condition ID="checkReport"
+    <Condition ID="CheckReport"
                editable="true"/>
-    <Condition ID="isEveryoneHere"
+    <Condition ID="IsEveryoneHere"
                editable="true"/>
-    <Action ID="scan4Victim"
+    <Action ID="Scan4Victim"
             editable="true"/>
   </TreeNodesModel>
 
