@@ -97,6 +97,7 @@ geometry_msgs::msg::PoseStamped GetWaypoint::generate_random_pose()
 std::string package_share_directory = ament_index_cpp::get_package_share_directory("kobuki");
 
 // Construir la ruta completa al archivo del mapa
+
 std::string map_path = package_share_directory + "/maps/aws_lab.pgm";
 
 // Leer el mapa

@@ -25,6 +25,7 @@ set(dependencies
     geometry_msgs
     OpenCV
     cv_bridge
+    std_msgs
 )
 
 include_directories(include ${ZMQ_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
@@ -32,11 +33,13 @@ include_directories(include ${ZMQ_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 add_library(getwp_bt_node SHARED src/nav_bt/GetWaypoint.cpp)
 add_library(move_bt_node SHARED src/nav_bt/Move.cpp)
 add_library(checkzone_bt_node SHARED src/nav_bt/CheckZone.cpp)
+add_library(rescue_bt_node SHARED src/nav_bt/RescueWaypoint.cpp)
 
 list(APPEND plugin_libs
   getwp_bt_node
   move_bt_node
   checkzone_bt_node
+  rescue_bt_node
 )
 
 foreach(bt_plugin ${plugin_libs})
