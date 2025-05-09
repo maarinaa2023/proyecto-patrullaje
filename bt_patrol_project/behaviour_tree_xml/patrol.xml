@@ -5,90 +5,47 @@
     <Fallback>
       <ReactiveSequence name="PatrolMode">
         <Inverter>
-          <checkVictimReport victim_report=""/>
+          <checkReport/>
         </Inverter>
-        <Fallback>
-          <Sequence name="checkSection">
-            <Inverter>
-              <checkCurrentSection current_section="{current_section}"
-                                   assigned_section="{assigned_section}"/>
-            </Inverter>
-            <NavigateToAssignedSection section="{assigned_section}"
-                                       success=""/>
-          </Sequence>
-          <scan4Report victim_report=""
-                       success=""/>
-          <MoveInSection section="{assigned_section}"
-                         success=""/>
-        </Fallback>
+        <Sequence>
+          <GetWaypoint waypoint="{wp}"/>
+          <Move goal="{wp}"/>
+          <scan4Victim/>
+          <ReportVictim new_waypoint="{new_wp}"/>
+        </Sequence>
       </ReactiveSequence>
       <Sequence name="RescueMode">
-        <NavigateToVictim rescue_location="{rescue_location}"
-                          success=""/>
-        <ReactiveSequence>
-          <Inverter>
-            <isEveryoneHere/>
-          </Inverter>
-          <checkPositions all_robots_here="{all_robots_here}"
-                          here=""/>
-        </ReactiveSequence>
-        <PerformSynchronization success=""/>
-        <ResetVictimReport victim_report=""
-                           success=""/>
+        <Move goal="{new_wp}"/>
+        <RetryUntilSuccessful num_attempts="-1">
+          <isEveryoneHere/>
+        </RetryUntilSuccessful>
+        <ResetVictim/>
       </Sequence>
     </Fallback>
   </BehaviorTree>
 
   <!-- Description of Node Models (used by Groot) -->
   <TreeNodesModel>
-    <Action ID="MoveInSection">
-      <input_port name="section"
-                  type="int"/>
-      <output_port name="success"
-                   type="bool"/>
-    </Action>
-    <Action ID="NavigateToAssignedSection">
-      <input_port name="section"
-                  type="int"/>
-      <output_port name="success"
-                   type="bool"/>
-    </Action>
-    <Action ID="NavigateToVictim">
-      <input_port name="rescue_location"
-                  type="Point3D"/>
-      <output_port name="success"
-                   type="bool"/>
-    </Action>
-    <Action ID="PerformSynchronization">
-      <output_port name="success"
-                   type="bool"/>
-    </Action>
-    <Action ID="ResetVictimReport"
+    <Action ID="GetWaypoint"
             editable="true">
-      <output_port name="victim_report"/>
-      <output_port name="success"/>
+      <output_port name="waypoint"/>
     </Action>
-    <Condition ID="checkCurrentSection"
-               editable="true">
-      <input_port name="current_section"/>
-      <input_port name="assigned_section"/>
-    </Condition>
-    <Action ID="checkPositions"
+    <Action ID="Move"
             editable="true">
-      <input_port name="all_robots_here"/>
-      <output_port name="here"/>
+      <input_port name="goal"/>
     </Action>
-    <Condition ID="checkVictimReport"
-               editable="true">
-      <input_port name="victim_report"/>
-    </Condition>
+    <Action ID="ReportVictim"
+            editable="true">
+      <output_port name="new_waypoint"/>
+    </Action>
+    <Action ID="ResetVictim"
+            editable="true"/>
+    <Condition ID="checkReport"
+               editable="true"/>
     <Condition ID="isEveryoneHere"
                editable="true"/>
-    <Action ID="scan4Report"
-            editable="true">
-      <output_port name="victim_report"/>
-      <output_port name="success"/>
-    </Action>
+    <Action ID="scan4Victim"
+            editable="true"/>
   </TreeNodesModel>
 
 </root>

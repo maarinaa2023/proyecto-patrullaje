@@ -10,7 +10,7 @@ La comunicacion entre robots se realiza mediante topicos en una red compartida (
 
 ![alt text][logo]
 
-[logo]: https://github.com/maarinaa2023/proyecto-patrullaje/blob/main/bt_patrol_project/doc/patrolBT.jpg "mapaBT"
+[logo]: https://github.com/maarinaa2023/proyecto-patrullaje/blob/main/bt_patrol_project/doc/bt_patrol.jpg "mapaBT"
 
 # Instalation
 
@@ -18,14 +18,11 @@ Antes de realizar la copia del repositorio en tu espacio de trabajo, es necesari
 
 [behaviortree_cpp_v3](https://github.com/BehaviorTree/behaviortree_cpp_v3-release)
 
-[libzmq3-dev](https://github.com/zeromq/libzmq)
-
 Esto se puede hacer mediante los siguientes comandos:
 
 ```
 sudo apt update
 sudo apt install ros-<ros_distro>-behaviortree-cpp-v3
-sudo apt install libzmq3-dev
 ```
 
 Para probar el 'bt_patrullaje', primero deberas crear un espacio de trabajo donde se construira:
